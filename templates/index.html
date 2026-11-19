@@ -1,0 +1,664 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIGNALDECK | Router Manager</title>
+
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+
+/* =========================
+   1. GENERAL SETTINGS
+========================= */
+
+:root {
+    --background: #080e13;
+    --panel: #111a23;
+    --panel-light: #162531;
+    --border: #263746;
+    --green: #63f2c2;
+    --blue: #69b7ff;
+    --red: #ff7185;
+    --white: #e6edf3;
+    --gray: #8b9baa;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--background);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+}
+
+/* =========================
+   2. NAVIGATION BAR
+========================= */
+
+header {
+    height: 75px;
+    padding: 0 5%;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--green);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.logo i {
+    font-size: 24px;
+}
+
+.nav-status {
+    color: var(--green);
+    font-family: monospace;
+    font-size: 12px;
+    border: 1px solid var(--green);
+    padding: 9px 15px;
+    border-radius: 5px;
+    background: #10251f;
+}
+
+/* =========================
+   3. MAIN CONTAINER
+========================= */
+
+.container {
+    max-width: 1400px;
+    margin: auto;
+    padding: 35px 25px;
+}
+
+.page-title {
+    margin-bottom: 30px;
+}
+
+.page-title h1 {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.page-title h1 span {
+    color: var(--green);
+}
+
+.page-title p {
+    color: var(--gray);
+    font-size: 13px;
+}
+
+/* =========================
+   4. DASHBOARD LAYOUT
+========================= */
+
+.dashboard {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 22px;
+    align-items: start;
+}
+
+.card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 17px 20px;
+    background: var(--panel-light);
+    border-bottom: 1px solid var(--border);
+}
+
+.card-header h2 {
+    color: var(--green);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.card-body {
+    padding: 22px;
+}
+
+/* =========================
+   5. CONNECTION FORM
+========================= */
+
+.description {
+    color: var(--gray);
+    font-size: 12px;
+    line-height: 1.7;
+    margin-bottom: 22px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    color: var(--gray);
+    font-family: monospace;
+    font-size: 11px;
+    margin-bottom: 9px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 13px;
+    background: #080e13;
+    color: var(--green);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    outline: none;
+    font-family: monospace;
+    font-size: 13px;
+}
+
+.form-group input:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 8px #63f2c233;
+}
+
+.form-group input::placeholder {
+    color: #526271;
+}
+
+/* =========================
+   6. EXECUTE BUTTON
+========================= */
+
+.execute-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--green);
+    color: #071711;
+    border: none;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.execute-btn:hover {
+    background: #91ffda;
+    box-shadow: 0 0 18px #63f2c244;
+    transform: translateY(-2px);
+}
+
+.execute-btn i {
+    margin-right: 8px;
+}
+
+/* =========================
+   7. ERROR MESSAGE
+========================= */
+
+.error-box {
+    margin-top: 18px;
+    padding: 14px;
+    background: #291820;
+    border: 1px solid var(--red);
+    border-left: 4px solid var(--red);
+    border-radius: 5px;
+    color: #ff9aaa;
+    font-family: monospace;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+/* =========================
+   8. RIGHT DASHBOARD
+========================= */
+
+.content-area {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.statistics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.stat-box {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 17px;
+}
+
+.stat-box p {
+    color: var(--gray);
+    font-size: 10px;
+    font-family: monospace;
+    margin-bottom: 10px;
+}
+
+.stat-box h3 {
+    font-size: 19px;
+    color: var(--white);
+}
+
+.stat-box h3 span {
+    color: var(--green);
+    font-size: 10px;
+}
+
+/* =========================
+   9. TERMINAL WINDOWS
+========================= */
+
+.terminal {
+    background: #080e13;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.terminal-header {
+    padding: 14px 18px;
+    background: var(--panel-light);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.terminal-header h3 {
+    color: var(--blue);
+    font-family: monospace;
+    font-size: 12px;
+}
+
+.terminal-header span {
+    color: var(--green);
+    font-family: monospace;
+    font-size: 10px;
+}
+
+.terminal-header i {
+    margin-right: 8px;
+}
+
+.terminal pre {
+    padding: 20px;
+    color: #c8d4dd;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    overflow-x: auto;
+    max-height: 400px;
+}
+
+/* =========================
+   10. EMPTY TERMINAL
+========================= */
+
+.empty-terminal {
+    min-height: 350px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    color: var(--gray);
+    text-align: center;
+}
+
+.empty-terminal i {
+    color: var(--blue);
+    font-size: 40px;
+}
+
+.empty-terminal h3 {
+    font-family: monospace;
+    font-size: 13px;
+}
+
+.empty-terminal p {
+    font-size: 11px;
+}
+
+/* =========================
+   11. OUTPUT GRID
+========================= */
+
+.output-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.output-grid .terminal {
+    margin-bottom: 0;
+    min-width: 0;
+}
+
+/* =========================
+   12. FOOTER
+========================= */
+
+footer {
+    margin-top: 30px;
+    padding: 18px 0;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    color: var(--gray);
+    font-family: monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+
+/* =========================
+   13. RESPONSIVE DESIGN
+========================= */
+
+@media (max-width: 900px) {
+
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .page-title h1 {
+        font-size: 27px;
+    }
+
+}
+
+@media (max-width: 650px) {
+
+    header {
+        padding: 0 15px;
+    }
+
+    .logo {
+        font-size: 15px;
+    }
+
+    .container {
+        padding: 25px 15px;
+    }
+
+    .statistics {
+        grid-template-columns: 1fr;
+    }
+
+    .output-grid {
+        grid-template-columns: 1fr;
+    }
+
+    footer {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     NAVIGATION
+========================= -->
+
+<header>
+
+    <div class="logo">
+        <i class="fa-solid fa-network-wired"></i>
+        SIGNALDECK
+    </div>
+
+    <div class="nav-status">
+        <i class="fa-solid fa-circle"></i>
+        SYSTEM READY
+    </div>
+
+</header>
+
+<!-- =========================
+     MAIN DASHBOARD
+========================= -->
+
+<div class="container">
+
+    <div class="page-title">
+
+        <h1>
+            Router <span>Command Center</span>
+        </h1>
+
+        <p>
+            Netmiko Router Manager / Network Diagnostics
+        </p>
+
+    </div>
+
+    <div class="dashboard">
+
+        <!-- CONNECTION PANEL -->
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <h2>
+                    <i class="fa-solid fa-sliders"></i>
+                    Connection Setup
+                </h2>
+
+            </div>
+
+            <div class="card-body">
+
+                <p class="description">
+                    Connect to your Cisco router and execute predefined diagnostic commands.
+                </p>
+
+                <form method="POST">
+
+                    <div class="form-group">
+
+                        <label>ROUTER IP ADDRESS</label>
+
+                        <input
+                            type="text"
+                            name="ip_address"
+                            value="{{ target_ip }}"
+                            placeholder="192.168.10.231"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label>TELNET PORT</label>
+
+                        <input
+                            type="number"
+                            name="port"
+                            value="{{ target_port }}"
+                            placeholder="32770"
+                            required
+                        >
+
+                    </div>
+
+                    <button type="submit" class="execute-btn">
+
+                        <i class="fa-solid fa-play"></i>
+                        EXECUTE DIAGNOSTICS
+
+                    </button>
+
+                </form>
+
+                <!-- ERROR HANDLING -->
+
+                {% if error %}
+
+                <div class="error-box">
+
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    SYSTEM ERROR:
+
+                    <br>
+
+                    {{ error }}
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <!-- TERMINAL OUTPUT AREA -->
+
+        <div class="content-area">
+
+            <!-- STATISTICS -->
+
+            <div class="statistics">
+
+                <div class="stat-box">
+
+                    <p>CONNECTION TYPE</p>
+
+                    <h3>
+                        Telnet
+                        <span>TCP</span>
+                    </h3>
+
+                </div>
+
+                <div class="stat-box">
+
+                    <p>DIAGNOSTIC COMMANDS</p>
+
+                    <h3>
+                        03
+                        <span>COMMANDS</span>
+                    </h3>
+
+                </div>
+
+                <div class="stat-box">
+
+                    <p>SESSION STATUS</p>
+
+                    <h3>
+                        {% if results %}
+                            Active
+                        {% else %}
+                            Standby
+                        {% endif %}
+                    </h3>
+
+                </div>
+
+            </div>
+
+            <!-- DYNAMIC COMMAND RESULTS -->
+
+            {% if results %}
+
+                <div class="output-grid">
+
+                    {% for command, output in results.items() %}
+
+                    <div class="terminal">
+
+                        <div class="terminal-header">
+
+                            <h3>
+                                <i class="fa-solid fa-terminal"></i>
+                                {{ command }}
+                            </h3>
+
+                            <span>● OUTPUT</span>
+
+                        </div>
+
+                        <pre>{{ output }}</pre>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <!-- EMPTY TERMINAL -->
+
+                <div class="terminal empty-terminal">
+
+                    <i class="fa-solid fa-terminal"></i>
+
+                    <h3>
+                        AWAITING COMMAND EXECUTION
+                    </h3>
+
+                    <p>
+                        Execute diagnostics to display router information.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        <span>
+            SIGNALDECK / ROUTER DIAGNOSTICS
+        </span>
+
+        <span>
+            LOCAL SESSION / NETMIKO BACKEND
+        </span>
+
+    </footer>
+
+</div>
+
+</body>
+</html>
